@@ -5,8 +5,7 @@
 ### By: Yousif Radhi
 
 ### Project Description
-This is the unit 1 project, and it is inteded to be a simple Tetris version programmed using HTML,CSS and vanilla JavaScript. 
-
+This is the unit 1 project, and it is intended to be a simple Tetris version programmed using HTML, CSS, and vanilla JavaScript.
 ### Getting Started
 The game is already online! Click here to [visit](surge link) it.
 
