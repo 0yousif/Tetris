@@ -1,0 +1,40 @@
+*{
+  box-sizing: border-box;
+}
+html{
+  font-size: 1vw;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100vw;
+}
+
+.mainBoard { 
+  display: grid;
+  width: 40%;
+  height: 50%;
+  padding: 0.5rem;
+  border: 2px solid rgb(240, 189, 189);
+  border-radius: 2rem;
+  /* gap: 0.1rem; */
+  outline: 2px solid black ;
+  outline-offset: 0.2rem;
+  background-color: #FF4873;
+}
+.mainBoard .boardCell{ 
+  aspect-ratio: 1/1;
+  background-color: antiquewhite;
+  display: flex;
+  border-radius: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFD3DD;
+  border: 0.12rem solid black;
+}
+
+[data-index="1"]{
+  background-color: saddlebrown;
+}

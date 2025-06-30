@@ -1,50 +1,130 @@
-
-
-
-// HTML
-
-// an element with grid display to represent the board.
-____________
-
-// script.js
-
 // Variables
 
-// board state: 2D array to show the current board state
+let boardElement = document.querySelector(".mainBoard")
+let boardDimentions = {
+  height: 11,
+  width: 9,
+}
+let blocks = [
+  {
+    height: 2,
+    width: 3,
+    positions: [
+      { row: 0, column: 1 },
+      { row: 1, column: 0 },
+      { row: 1, column: 1 },
+      { row: 1, column: 2 },
+    ],
+  },
+  {
+    height: 1,
+    width: 4,
+    positions: [
+      { row: 0, column: 0 },
+      { row: 0, column: 1 },
+      { row: 0, column: 2 },
+      { row: 0, column: 3 },
+    ],
+  },
+  {
+    height: 2,
+    width: 3,
+    positions: [
+      { row: 0, column: 0 },
+      { row: 1, column: 0 },
+      { row: 1, column: 1 },
+      { row: 1, column: 2 },
+    ],
+  },
+  {
+    height: 2,
+    width: 3,
+    positions: [
+      { row: 0, column: 2 },
+      { row: 1, column: 0 },
+      { row: 1, column: 1 },
+      { row: 1, column: 2 },
+    ],
+  },
+  {
+    height: 2,
+    width: 2,
+    positions: [
+      { row: 0, column: 0 },
+      { row: 0, column: 1 },
+      { row: 1, column: 0 },
+      { row: 1, column: 1 },
+    ],
+  },
+  {
+    height: 2,
+    width: 3,
+    positions: [
+      { row: 0, column: 1 },
+      { row: 1, column: 0 },
+      { row: 1, column: 1 },
+      { row: 0, column: 2 },
+    ],
+  },
+  {
+    height: 2,
+    width: 3,
+    positions: [
+      { row: 0, column: 1 },
+      { row: 0, column: 0 },
+      { row: 1, column: 1 },
+      { row: 1, column: 2 },
+    ],
+  },
+]
+let currentBlock
+let currentBlockCordinates = [
+  { row: 0, column: 0 },
+  { row: 0, column: 0 },
+  { row: 0, column: 0 },
+  { row: 0, column: 0 },
+]
+// Board creation
 
-// board element: the actual HTML board container node
-
-// current block position: will store the current falling Tetris block position
-
-// level
-
-// falling speed: fixed number * the current level
-
-// blocks: array of the blocks shape
-
-
-
+for (let i = 0; i < boardDimentions.height * boardDimentions.width; i++) {
+  boardElement.innerHTML += `<div data-index="${i}" class="boardCell">+</div>`
+}
+boardElement.style.gridTemplateColumns = `repeat(${boardDimentions.width}, 1fr)`
+boardElement.style.gridTemplateRows = `repeat(${boardDimentions.height}, 1fr)`
 
 // Functions
 
-// create block: Will pick a random block from the blocks array, then attach it to the board by changing the color of the grid cells. This function will update the current block and the current block position variables.
+let convertToIndex = (row, column) => {
+  return row * boardDimentions.width + column
+}
+let convertToCordinates = (index) => {
+  return {
+    row: Math.trunc(index / boardDimentions.width),
+    column: index % boardDimentions.width,
+  }
+}
 
-// increase score: Will increase the score according to the filled rows before removing them
+let randomNumber = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
 
-// Filled rows check: A continuous loop to check if one of the rows is already filled; if so, the whole row will be deleted and all of the filled rows above it will be shifted.
+let changeBoxColor = (index, row,col,color) => {
+  if (index){
+    document.querySelector(`[data-index=${index}]`).style = `red`
+  }else {
+    document.querySelector(`[data-index=${convertToIndex(row,col)}]`).style = `red`
+  }
+}
+let createBlock = () => {
+  let newBlock = blocks[randomNumber(0, 6)]
 
-// game over check: checks if one of the blocks is outside the board; if so, the game will end.
+  let spawningCordinates = [
+    randomNumber(0 + newBlock.width, (boardDimentions.width - 1) - newBlock.width),
+    randomNumber(0 + newBlock.height, (boardDimentions.height - 1) - newBlock.height),
+  ]
+  currentBlockCordinates.forEach((value)=>{
+    
+  })
+  // spawning the block
+}
 
-
-
-
-// Intervals
-
-// An interval moves the current block downward as long as the bottom is not touching another block; this will be done by increasing the row that the block is already in in each iteration.
-
-
-
-
-// event listeners
-
-// Arrows event listeners: will move the current block by 1 each time or as long as the left/right arrow is pressed

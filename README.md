@@ -13,9 +13,9 @@ The game is already online! Click here to [visit](surge link) it.
 - bla bla bla
 - bla bla bla
 
-### Wireframes
+### Wireframes![alt text](image-1.png)
 ![alt text](image.png)
-### Psudo Code
+### Psudo Code 
 
 #### HTML
 
