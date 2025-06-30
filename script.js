@@ -5,6 +5,7 @@ let boardDimentions = {
   height: 11,
   width: 9,
 }
+let boardArray = []
 let blocks = [
   {
     height: 2,
@@ -84,13 +85,24 @@ let currentBlockCordinates = [
   { row: 0, column: 0 },
   { row: 0, column: 0 },
 ]
-// Board creation
+// HTML Board creation
 
 for (let i = 0; i < boardDimentions.height * boardDimentions.width; i++) {
   boardElement.innerHTML += `<div data-index="${i}" class="boardCell">+</div>`
 }
 boardElement.style.gridTemplateColumns = `repeat(${boardDimentions.width}, 1fr)`
 boardElement.style.gridTemplateRows = `repeat(${boardDimentions.height}, 1fr)`
+
+// JS board array creation
+for (let i = 0; i < boardDimentions.height; i++) {
+  boardArray.push([])
+}
+
+boardArray.forEach((row) => {
+  for (let i = 0; i < boardDimentions.width; i++) {
+    row.push("")
+  }
+})
 
 // Functions
 
@@ -108,23 +120,49 @@ let randomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-let changeBoxColor = (index, row,col,color) => {
-  if (index){
-    document.querySelector(`[data-index=${index}]`).style = `red`
-  }else {
-    document.querySelector(`[data-index=${convertToIndex(row,col)}]`).style = `red`
+let changeCellColor = (index, row, col, color) => {
+  if (index) {
+    document.querySelector(
+      `[data-index="${index}"]`
+    ).style.backgroundColor = color
+  } else {
+    document.querySelector(
+      `[data-index="${convertToIndex(row, col)}"]`
+    ).style.backgroundColor = color
   }
 }
+
+let moveCell= (index,xMovement,yMovement) => {
+
+}
+
+
 let createBlock = () => {
   let newBlock = blocks[randomNumber(0, 6)]
 
-  let spawningCordinates = [
-    randomNumber(0 + newBlock.width, (boardDimentions.width - 1) - newBlock.width),
-    randomNumber(0 + newBlock.height, (boardDimentions.height - 1) - newBlock.height),
-  ]
-  currentBlockCordinates.forEach((value)=>{
+  let spawningRow = randomNumber(
+    0 + newBlock.width,
+    boardDimentions.width - 1 - newBlock.width
+  )
+  let spawningColumn = randomNumber(
+    0 + newBlock.height,
+    boardDimentions.height - 1 - newBlock.height
+  )
+
+  currentBlockCordinates.forEach((value, index) => {
+    changeCellColor(
+      "",
+      spawningRow + newBlock.positions[index].row,
+      spawningColumn + newBlock.positions[index].column,
+      ""
+    )
+    currentBlockCordinates[index].row =
+      spawningRow + newBlock.positions[index].row
+    currentBlockCordinates[index].column =
+      spawningColumn + newBlock.positions[index].column
+
+    boardArray[spawningRow + newBlock.positions[index].row][spawningColumn + newBlock.positions[index].column] = "x"
     
   })
   // spawning the block
 }
-
