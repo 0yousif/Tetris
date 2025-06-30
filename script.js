@@ -78,13 +78,22 @@ let blocks = [
     ],
   },
 ]
-let currentBlock
+let currentBlock = {
+  color: "",
+  cordinates: [
+    { row: 0, column: 0 },
+    { row: 0, column: 0 },
+    { row: 0, column: 0 },
+    { row: 0, column: 0 },
+  ],
+}
 let currentBlockCordinates = [
   { row: 0, column: 0 },
   { row: 0, column: 0 },
   { row: 0, column: 0 },
   { row: 0, column: 0 },
 ]
+let colorsList = ["#FFBA00", "#27C9FF", "#40C422", "#7E84FF", "#D87EFF"]
 // HTML Board creation
 
 for (let i = 0; i < boardDimentions.height * boardDimentions.width; i++) {
@@ -122,9 +131,8 @@ let randomNumber = (min, max) => {
 
 let changeCellColor = (index, row, col, color) => {
   if (index) {
-    document.querySelector(
-      `[data-index="${index}"]`
-    ).style.backgroundColor = color
+    document.querySelector(`[data-index="${index}"]`).style.backgroundColor =
+      color
   } else {
     document.querySelector(
       `[data-index="${convertToIndex(row, col)}"]`
@@ -132,13 +140,11 @@ let changeCellColor = (index, row, col, color) => {
   }
 }
 
-let moveCell= (index,xMovement,yMovement) => {
-
-}
-
+let moveCell = (index, xMovement, yMovement) => {}
 
 let createBlock = () => {
   let newBlock = blocks[randomNumber(0, 6)]
+  currentBlock.color = colorsList[randomNumber(0, colorsList.length)]
 
   let spawningRow = randomNumber(
     0 + newBlock.width,
@@ -149,20 +155,21 @@ let createBlock = () => {
     boardDimentions.height - 1 - newBlock.height
   )
 
-  currentBlockCordinates.forEach((value, index) => {
+  currentBlock.cordinates.forEach((value, index) => {
+    currentBlock.cordinates[index].row =
+      spawningRow + newBlock.positions[index].row
+    currentBlock.cordinates[index].column =
+      spawningColumn + newBlock.positions[index].column
+
+    boardArray[spawningRow + newBlock.positions[index].row][
+      spawningColumn + newBlock.positions[index].column
+    ] = "x"
     changeCellColor(
       "",
       spawningRow + newBlock.positions[index].row,
       spawningColumn + newBlock.positions[index].column,
-      ""
+      currentBlock.color
     )
-    currentBlockCordinates[index].row =
-      spawningRow + newBlock.positions[index].row
-    currentBlockCordinates[index].column =
-      spawningColumn + newBlock.positions[index].column
-
-    boardArray[spawningRow + newBlock.positions[index].row][spawningColumn + newBlock.positions[index].column] = "x"
-    
   })
   // spawning the block
 }
