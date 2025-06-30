@@ -87,13 +87,9 @@ let currentBlock = {
     { row: 0, column: 0 },
   ],
 }
-let currentBlockCordinates = [
-  { row: 0, column: 0 },
-  { row: 0, column: 0 },
-  { row: 0, column: 0 },
-  { row: 0, column: 0 },
-]
 let colorsList = ["#FFBA00", "#27C9FF", "#40C422", "#7E84FF", "#D87EFF"]
+let fallingSpeed = 1000
+let level = 1
 // HTML Board creation
 
 for (let i = 0; i < boardDimentions.height * boardDimentions.width; i++) {
@@ -131,16 +127,38 @@ let randomNumber = (min, max) => {
 
 let changeCellColor = (index, row, col, color) => {
   if (index) {
-    document.querySelector(`[data-index="${index}"]`).style.backgroundColor =
-      color
+    document.querySelector(
+      `[data-index="${index}"]`
+    ).style.backgroundColor = `${color}`
   } else {
     document.querySelector(
       `[data-index="${convertToIndex(row, col)}"]`
-    ).style.backgroundColor = color
+    ).style.backgroundColor = `${color}`
   }
 }
 
-let moveCell = (index, xMovement, yMovement) => {}
+let moveCell = (index, xMovement, yMovement) => {
+  let { row, column } = convertToCordinates(index)
+  // change the colors
+  changeCellColor(index, "", "", "")
+  changeCellColor(
+    convertToIndex(row + xMovement, column + yMovement),
+    "",
+    "",
+    currentBlock.color
+  )
+  // edit the board array
+  boardArray[row][column] = ""
+  boardArray[row + yMovement][column + xMovement] = "x"
+  // edit currentBlock cordinates
+
+  currentBlock.cordinates.forEach((cordinate) => {
+    if (row === cordinate.row && column === cordinate.column) {
+      cordinate.row = row + xMovement
+      cordinate.column = column + yMovement
+    }
+  })
+}
 
 let createBlock = () => {
   let newBlock = blocks[randomNumber(0, 6)]
@@ -173,3 +191,14 @@ let createBlock = () => {
   })
   // spawning the block
 }
+
+// Intervals
+createBlock()
+// Falling interval
+;(() => {
+  let intervalID = setInterval(() => {
+    currentBlock.cordinates.forEach((cordinate) => {
+      moveCell(convertToIndex(cordinate.row, cordinate.column), 1, 0)
+    })
+  }, fallingSpeed * level)
+})()
