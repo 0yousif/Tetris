@@ -65,17 +65,17 @@ let blocks = [
     width: 3,
     positions: [
       { row: 0, column: 1 },
+      { row: 0, column: 2 },
       { row: 1, column: 0 },
       { row: 1, column: 1 },
-      { row: 0, column: 2 },
     ],
   },
   {
     height: 2,
     width: 3,
     positions: [
-      { row: 0, column: 1 },
       { row: 0, column: 0 },
+      { row: 0, column: 1 },
       { row: 1, column: 1 },
       { row: 1, column: 2 },
     ],
@@ -128,7 +128,7 @@ let convertToCordinates = (index) => {
 
 // Generates a random number between min and max
 let randomNumber = (min, max) => {
-  // inclusive of both min and max 
+  // inclusive of both min and max
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
@@ -158,8 +158,6 @@ let moveBlock = (xMovement, yMovement) => {
     )
   })
   newCordinates.forEach((newCordinate, index) => {
-
-
     newCordinate.row = newCordinate.row + yMovement
     newCordinate.column = newCordinate.column + xMovement
 
@@ -176,19 +174,13 @@ let moveBlock = (xMovement, yMovement) => {
 // Creates a block
 let createBlock = () => {
   // spawning the block
-  let newBlock = blocks[randomNumber(0, 4)]
+  let newBlock = blocks[randomNumber(0, 6)]
   currentBlock.color = colorsList[randomNumber(0, 4)]
-  let spawningRow = randomNumber(
-    newBlock.width,
-    boardDimentions.width - 1 - newBlock.width
-  )
-  console.log(newBlock.width, boardDimentions.width - 1 - newBlock.width)
-  console.log(spawningRow)
+  let spawningRow = randomNumber(0, boardDimentions.width - 1 - newBlock.width)
+  // console.log(0, boardDimentions.width - newBlock.width)
+  // console.log(spawningRow)
 
-  let spawningColumn = randomNumber(
-    newBlock.height,
-    boardDimentions.height - 1 - newBlock.height
-  )
+  let spawningColumn = randomNumber(0, boardDimentions.width - newBlock.width)
 
   // console.log(spawningRow, spawningColumn)
   currentBlock.cordinates.forEach((value, index) => {
@@ -209,16 +201,55 @@ let createBlock = () => {
   })
 }
 
+// checks if the current block is touching another block below it
+let isTouching = () => {
+  let lowestRow = currentBlock.cordinates.reduce((acc, cordinate) => {
+    if (cordinate.row > acc) {
+      return cordinate.row
+    } else {
+      return acc
+    }
+  }, 0)
+  let lowestRowBlockCells = currentBlock.cordinates.filter((cordinate) => {
+    return cordinate.row === lowestRow
+  })
+
+  lowestRowBlockCells.forEach((value) => {
+    // if
+  })
+}
+
+// Event Listeners
+let leftCountdown = true
+let rightCountdown = true
+let movementCountdown = true
+
+addEventListener("keydown", (event) => {
+  if (movementCountdown) {
+    movementCountdown = false
+    switch (event.key) {
+      case "ArrowLeft":
+        moveBlock(-1, 0)
+        break
+      case "ArrowRight":
+        moveBlock(1, 0)
+        break
+    }
+    setTimeout(() => {
+      movementCountdown = true
+    }, 100)
+  }
+})
+
 // Intervals
 createBlock()
 
 // Falling interval
 
 let gravity = () => {
-  console.log(fallingSpeed)
-  moveBlock(0, 1) 
-  setTimeout(gravity,fallingSpeed * level)
-
+  moveBlock(0, 1)
+  setTimeout(gravity, fallingSpeed * level)
+  console.log(isTouching())
 }
 
 gravity()
