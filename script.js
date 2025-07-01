@@ -1,11 +1,14 @@
 // Variables
 
+// Board Variables
 let boardElement = document.querySelector(".mainBoard")
 let boardDimentions = {
   height: 11,
   width: 9,
 }
 let boardArray = []
+
+// Blocks variables
 let blocks = [
   {
     height: 2,
@@ -90,6 +93,7 @@ let currentBlock = {
 let colorsList = ["#FFBA00", "#27C9FF", "#40C422", "#7E84FF", "#D87EFF"]
 let fallingSpeed = 1000
 let level = 1
+
 // HTML Board creation
 
 for (let i = 0; i < boardDimentions.height * boardDimentions.width; i++) {
@@ -111,6 +115,7 @@ boardArray.forEach((row) => {
 
 // Functions
 
+// Usual quick operations
 let convertToIndex = (row, column) => {
   return row * boardDimentions.width + column
 }
@@ -121,9 +126,13 @@ let convertToCordinates = (index) => {
   }
 }
 
+// Generates a random number between min and max
 let randomNumber = (min, max) => {
+  // inclusive of both min and max 
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
+// Blocks edit functions
 
 let changeCellColor = (index, row, col, color) => {
   if (index) {
@@ -137,42 +146,51 @@ let changeCellColor = (index, row, col, color) => {
   }
 }
 
-let moveCell = (index, xMovement, yMovement) => {
-  let { row, column } = convertToCordinates(index)
-  // change the colors
-  changeCellColor(index, "", "", "")
-  changeCellColor(
-    convertToIndex(row + xMovement, column + yMovement),
-    "",
-    "",
-    currentBlock.color
-  )
-  // edit the board array
-  boardArray[row][column] = ""
-  boardArray[row + yMovement][column + xMovement] = "x"
-  // edit currentBlock cordinates
+let moveBlock = (xMovement, yMovement) => {
+  let newCordinates = new Array(...currentBlock.cordinates)
+  currentBlock.cordinates.forEach((cordinate, index) => {
+    boardArray[cordinate.row][cordinate.column] = ""
+    changeCellColor(
+      "",
+      currentBlock.cordinates[index].row,
+      currentBlock.cordinates[index].column,
+      ""
+    )
+  })
+  newCordinates.forEach((newCordinate, index) => {
 
-  currentBlock.cordinates.forEach((cordinate) => {
-    if (row === cordinate.row && column === cordinate.column) {
-      cordinate.row = row + xMovement
-      cordinate.column = column + yMovement
-    }
+
+    newCordinate.row = newCordinate.row + yMovement
+    newCordinate.column = newCordinate.column + xMovement
+
+    boardArray[newCordinate.row][newCordinate.column] = "x"
+    changeCellColor(
+      convertToIndex(newCordinate.row, newCordinate.column),
+      "",
+      "",
+      currentBlock.color
+    )
   })
 }
 
+// Creates a block
 let createBlock = () => {
-  let newBlock = blocks[randomNumber(0, 6)]
-  currentBlock.color = colorsList[randomNumber(0, colorsList.length)]
-
+  // spawning the block
+  let newBlock = blocks[randomNumber(0, 4)]
+  currentBlock.color = colorsList[randomNumber(0, 4)]
   let spawningRow = randomNumber(
-    0 + newBlock.width,
+    newBlock.width,
     boardDimentions.width - 1 - newBlock.width
   )
+  console.log(newBlock.width, boardDimentions.width - 1 - newBlock.width)
+  console.log(spawningRow)
+
   let spawningColumn = randomNumber(
-    0 + newBlock.height,
+    newBlock.height,
     boardDimentions.height - 1 - newBlock.height
   )
 
+  // console.log(spawningRow, spawningColumn)
   currentBlock.cordinates.forEach((value, index) => {
     currentBlock.cordinates[index].row =
       spawningRow + newBlock.positions[index].row
@@ -189,16 +207,18 @@ let createBlock = () => {
       currentBlock.color
     )
   })
-  // spawning the block
 }
 
 // Intervals
 createBlock()
+
 // Falling interval
-;(() => {
-  let intervalID = setInterval(() => {
-    currentBlock.cordinates.forEach((cordinate) => {
-      moveCell(convertToIndex(cordinate.row, cordinate.column), 1, 0)
-    })
-  }, fallingSpeed * level)
-})()
+
+let gravity = () => {
+  console.log(fallingSpeed)
+  moveBlock(0, 1) 
+  setTimeout(gravity,fallingSpeed * level)
+
+}
+
+gravity()
