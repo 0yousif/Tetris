@@ -146,40 +146,63 @@ let changeCellColor = (index, row, col, color) => {
   }
 }
 
+let canMove = (newCordinates) => {
+  for (let i = 0; i < newCordinates.length; i++) {
+    console.log()
+    if (
+      boardArray[newCordinates[i].row][newCordinates[i].column] !== "" &&
+      !Boolean(currentBlock.cordinates.find(
+        (cordinate) =>
+          cordinate.row === newCordinates[i].row &&
+          cordinate.column === newCordinates[i].column
+      ))
+    ) {
+      return false
+    }
+  }
+  return true
+}
+
 let moveBlock = (xMovement, yMovement) => {
   let newCordinates = new Array(...currentBlock.cordinates)
-  newCordinates.forEach((newCordinate) => {
-    newCordinate.row = newCordinate.row + yMovement
-    newCordinate.column = newCordinate.column + xMovement
-  })
 
-  currentBlock.cordinates.forEach((cordinate, index) => {
-    boardArray[cordinate.row][cordinate.column] = ""
-    changeCellColor(
-      "",
-      currentBlock.cordinates[index].row,
-      currentBlock.cordinates[index].column,
-      ""
+  if (
+    canMove(
+      newCordinates.map((el) => {
+        return { row: el.row + yMovement, column: el.column + xMovement }
+      })
     )
-  })
-  newCordinates.forEach((newCordinate, index) => {
-    newCordinate.row = newCordinate.row + yMovement
-    newCordinate.column = newCordinate.column + xMovement
+  ) {
+    currentBlock.cordinates.forEach((cordinate, index) => {
+      boardArray[cordinate.row][cordinate.column] = ""
+      changeCellColor(
+        "",
+        currentBlock.cordinates[index].row,
+        currentBlock.cordinates[index].column,
+        ""
+      )
+    })
+    newCordinates.forEach((newCordinate, index) => {
+      newCordinate.row = newCordinate.row + yMovement
+      newCordinate.column = newCordinate.column + xMovement
 
-    boardArray[newCordinate.row][newCordinate.column] = "x"
-    changeCellColor(
-      convertToIndex(newCordinate.row, newCordinate.column),
-      "",
-      "",
-      currentBlock.color
-    )
-  })
+      boardArray[newCordinate.row][newCordinate.column] = "x"
+      changeCellColor(
+        convertToIndex(newCordinate.row, newCordinate.column),
+        "",
+        "",
+        currentBlock.color
+      )
+    })
+  } else {
+    return
+  }
 }
 
 // Creates a block
 let createBlock = () => {
   // spawning the block
-  let newBlock = blocks[randomNumber(0, 6)]
+  let newBlock = blocks[6]
   currentBlock.color = colorsList[randomNumber(0, 4)]
   let spawningRow = randomNumber(0, boardDimentions.width - 1 - newBlock.width)
   // console.log(0, boardDimentions.width - newBlock.width)
@@ -243,7 +266,10 @@ let collisionCheck = (side) => {
       return cordinate.column === veryRightColumn
     })
     for (let i = 0; i < veryRightCells.length; i++) {
-      if (veryRightCells[i].column === boardDimentions.width - 1) {
+      if (
+        veryRightCells[i].column === boardDimentions.width - 1 ||
+        boardArray[veryRightCells[i].row][veryRightCells[i].column + 1] !== ""
+      ) {
         return true
       }
     }
@@ -255,12 +281,15 @@ let collisionCheck = (side) => {
       } else {
         return acc
       }
-    }, 0)
+    }, currentBlock.cordinates[0].column)
     let veryLeftCells = currentBlock.cordinates.filter((cordinate) => {
       return cordinate.column === veryLeftColumn
     })
     for (let i = 0; i < veryLeftCells.length; i++) {
-      if (veryLeftCells[i].column === 0) {
+      if (
+        veryLeftCells[i].column === 0 ||
+        boardArray[veryLeftCells[i].row][veryLeftCells[i].column - 1] !== ""
+      ) {
         return true
       }
     }
@@ -295,14 +324,14 @@ createBlock()
 // Falling interval
 
 let gravity = () => {
-  console.log(collisionCheck("bottom"))
+  // console.log(collisionCheck("left"), collisionCheck("right"))
   if (!collisionCheck("bottom")) {
     if (nextBlockTimeout) {
       clearTimeout(nextBlockTimeout)
       nextBlockTimeout = 0
     }
     moveBlock(0, 1)
-    setTimeout(gravity, fallingSpeed * level)
+    setTimeout(gravity, 500)
   } else {
     if (!nextBlockTimeout) {
       nextBlockTimeout = setTimeout(createBlock, 2000)
