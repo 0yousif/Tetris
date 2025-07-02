@@ -203,6 +203,7 @@ let createBlock = () => {
 
 // checks if the current block is touching another block below it
 let isTouching = () => {
+  let isTouching
   let lowestRow = currentBlock.cordinates.reduce((acc, cordinate) => {
     if (cordinate.row > acc) {
       return cordinate.row
@@ -213,10 +214,20 @@ let isTouching = () => {
   let lowestRowBlockCells = currentBlock.cordinates.filter((cordinate) => {
     return cordinate.row === lowestRow
   })
+  // console.log(lowestRowBlockCells)
 
-  lowestRowBlockCells.forEach((value) => {
-    // if
-  })
+  for (let i = 0; i < lowestRowBlockCells.length; i++) {
+    if (
+      boardArray[lowestRowBlockCells[i].row + 1][
+        lowestRowBlockCells[i].column
+      ] !== "" ||
+      lowestRowBlockCells[i].row === boardDimentions.height - 1
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
 }
 
 // Event Listeners
