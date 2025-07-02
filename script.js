@@ -148,6 +148,11 @@ let changeCellColor = (index, row, col, color) => {
 
 let moveBlock = (xMovement, yMovement) => {
   let newCordinates = new Array(...currentBlock.cordinates)
+  newCordinates.forEach((newCordinate) => {
+    newCordinate.row = newCordinate.row + yMovement
+    newCordinate.column = newCordinate.column + xMovement
+  })
+
   currentBlock.cordinates.forEach((cordinate, index) => {
     boardArray[cordinate.row][cordinate.column] = ""
     changeCellColor(
@@ -202,54 +207,86 @@ let createBlock = () => {
 }
 
 // checks if the current block is touching another block below it
-let isTouching = () => {
-  let isTouching
-  let lowestRow = currentBlock.cordinates.reduce((acc, cordinate) => {
-    if (cordinate.row > acc) {
-      return cordinate.row
-    } else {
-      return acc
-    }
-  }, 0)
-  let lowestRowBlockCells = currentBlock.cordinates.filter((cordinate) => {
-    return cordinate.row === lowestRow
-  })
-  // console.log(lowestRowBlockCells)
+let collisionCheck = (side) => {
+  if (side === "bottom") {
+    let lowestRow = currentBlock.cordinates.reduce((acc, cordinate) => {
+      if (cordinate.row > acc) {
+        return cordinate.row
+      } else {
+        return acc
+      }
+    }, 0)
+    let lowestRowBlockCells = currentBlock.cordinates.filter((cordinate) => {
+      return cordinate.row === lowestRow
+    })
 
-  for (let i = 0; i < lowestRowBlockCells.length; i++) {
-    if (
-      boardArray[lowestRowBlockCells[i].row + 1][
-        lowestRowBlockCells[i].column
-      ] !== "" ||
-      lowestRowBlockCells[i].row === boardDimentions.height - 1
-    ) {
-      return true
-    } else {
-      return false
+    for (let i = 0; i < lowestRowBlockCells.length; i++) {
+      if (
+        lowestRowBlockCells[i].row === boardDimentions.height - 1 ||
+        boardArray[lowestRowBlockCells[i].row + 1][
+          lowestRowBlockCells[i].column
+        ] !== ""
+      ) {
+        return true
+      }
     }
+    return false
+  } else if (side === "right") {
+    let veryRightColumn = currentBlock.cordinates.reduce((acc, cordinate) => {
+      if (cordinate.column > acc) {
+        return cordinate.column
+      } else {
+        return acc
+      }
+    }, 0)
+    let veryRightCells = currentBlock.cordinates.filter((cordinate) => {
+      return cordinate.column === veryRightColumn
+    })
+    for (let i = 0; i < veryRightCells.length; i++) {
+      if (veryRightCells[i].column === boardDimentions.width - 1) {
+        return true
+      }
+    }
+    return false
+  } else if (side === "left") {
+    let veryLeftColumn = currentBlock.cordinates.reduce((acc, cordinate) => {
+      if (cordinate.column < acc) {
+        return cordinate.column
+      } else {
+        return acc
+      }
+    }, 0)
+    let veryLeftCells = currentBlock.cordinates.filter((cordinate) => {
+      return cordinate.column === veryLeftColumn
+    })
+    for (let i = 0; i < veryLeftCells.length; i++) {
+      if (veryLeftCells[i].column === 0) {
+        return true
+      }
+    }
+    return false
   }
 }
+// console.log(lowestRowBlockCells)
 
 // Event Listeners
 let leftCountdown = true
 let rightCountdown = true
 let movementCountdown = true
+let nextBlockTimeout
 
 addEventListener("keydown", (event) => {
   if (movementCountdown) {
     movementCountdown = false
-    switch (event.key) {
-      case "ArrowLeft":
-        moveBlock(-1, 0)
-        break
-      case "ArrowRight":
-        moveBlock(1, 0)
-        break
+    if (event.key === "ArrowLeft" && !collisionCheck("left")) {
+      moveBlock(-1, 0)
+    } else if (event.key === "ArrowRight" && !collisionCheck("right")) {
+      moveBlock(1, 0)
     }
-    setTimeout(() => {
-      movementCountdown = true
-    }, 100)
   }
+  setTimeout(() => {
+    movementCountdown = true
+  }, 100)
 })
 
 // Intervals
@@ -258,9 +295,20 @@ createBlock()
 // Falling interval
 
 let gravity = () => {
-  moveBlock(0, 1)
-  setTimeout(gravity, fallingSpeed * level)
-  console.log(isTouching())
+  console.log(collisionCheck("bottom"))
+  if (!collisionCheck("bottom")) {
+    if (nextBlockTimeout) {
+      clearTimeout(nextBlockTimeout)
+      nextBlockTimeout = 0
+    }
+    moveBlock(0, 1)
+    setTimeout(gravity, fallingSpeed * level)
+  } else {
+    if (!nextBlockTimeout) {
+      nextBlockTimeout = setTimeout(createBlock, 2000)
+    }
+    setTimeout(gravity, fallingSpeed * level)
+  }
 }
 
 gravity()
