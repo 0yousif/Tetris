@@ -1,5 +1,5 @@
 // Variables
-// no bugs, currently I have the rotation, rows deletion, and rows shifting.
+// new issue to solve the when the block is tuck
 // Board Variables
 let boardElement = document.querySelector(".mainBoard")
 let boardDimentions = {
@@ -110,6 +110,7 @@ let colorsList = ["#FFBA00", "#27C9FF", "#40C422", "#7E84FF", "#D87EFF"]
 let initialColor = ["#FFD3DD"]
 let fallingSpeed = 1000
 let level = 1
+let filledRow
 
 // HTML Board creation
 
@@ -175,7 +176,7 @@ let canMove = (newCordinates) => {
             cordinate.row === newCordinates[i].row &&
             cordinate.column === newCordinates[i].column
         )
-      ) 
+      )
     ) {
       return false
     }
@@ -222,8 +223,8 @@ let moveBlock = (xMovement, yMovement) => {
 // Creates a block
 let createBlock = () => {
   // spawning the block
-  // let newBlock = blocks[randomNumber(0, 6   )]
-  let newBlock = { ...blocks[1] }
+  let newBlock = blocks[randomNumber(0, 6)]
+  // let newBlock = { ...blocks[1] }
   currentBlock.color = colorsList[randomNumber(0, 4)]
   let spawningRow = randomNumber(0, boardDimentions.width - 1 - newBlock.width)
   let spawningColumn = randomNumber(0, boardDimentions.width - newBlock.width)
@@ -248,6 +249,7 @@ let createBlock = () => {
 }
 
 let rotateBlock = () => {
+  console.log(boardArray)
   let center
   if (currentBlock.centerIndex === -1) {
     return
@@ -266,8 +268,13 @@ let rotateBlock = () => {
   })
   console.log(newCordinates)
 
-  for (let i = 0;i< newCordinates.length; i++){
-    if(newCordinates[i].row < 0 || newCordinates[i].row < 0 || newCordinates[i].row >= boardDimentions.height || newCordinates[i].column >= boardDimentions.width ){
+  for (let i = 0; i < newCordinates.length; i++) {
+    if (
+      newCordinates[i].row < 0 ||
+      newCordinates[i].row < 0 ||
+      newCordinates[i].row >= boardDimentions.height ||
+      newCordinates[i].column >= boardDimentions.width
+    ) {
       return
     }
   }
@@ -280,51 +287,80 @@ let rotateBlock = () => {
     //   )
     // })
 
-    
-    for (let i = 0; i < newCordinates.length; i++){
-      // editing the board variable 
-      boardArray[currentBlock.cordinates[i].row][currentBlock.cordinates[i].column] = ""
+    for (let i = 0; i < newCordinates.length; i++) {
+      // editing the board variable
+      boardArray[currentBlock.cordinates[i].row][
+        currentBlock.cordinates[i].column
+      ] = ""
       boardArray[newCordinates[i].row][newCordinates[i].column] = "x"
 
-      // editing the cordinates 
+      // changing the color
+      changeCellColor(
+        "",
+        currentBlock.cordinates[i].row,
+        currentBlock.cordinates[i].column,
+        initialColor
+      )
+      changeCellColor(
+        "",
+        newCordinates[i].row,
+        newCordinates[i].column,
+        currentBlock.color
+      )
+      // editing the cordinates
 
       currentBlock.cordinates[i].row = newCordinates[i].row
-      currentBlock.cordinates[i].column = newCordinates[i].column 
-      // changing the color 
-        changeCellColor("",currentBlock.cordinates[i].row,currentBlock.cordinates[i].column, initialColor)
-        changeCellColor("", newCordinates[i].row,newCordinates[i].column,currentBlock.color)
+      currentBlock.cordinates[i].column = newCordinates[i].column
     }
-
-    // 
   } else {
     return
   }
+  console.log(boardArray)
 }
 // checks if the current block is touching another block below it
 let collisionCheck = (side) => {
   if (side === "bottom") {
-    let lowestRow = currentBlock.cordinates.reduce((acc, cordinate) => {
-      if (cordinate.row > acc) {
-        return cordinate.row
-      } else {
-        return acc
-      }
-    }, 0)
-    let lowestRowBlockCells = currentBlock.cordinates.filter((cordinate) => {
-      return cordinate.row === lowestRow
-    })
-
-    for (let i = 0; i < lowestRowBlockCells.length; i++) {
+    for (let i = 0; i < currentBlock.cordinates.length; i++) {
       if (
-        lowestRowBlockCells[i].row === boardDimentions.height - 1 ||
-        boardArray[lowestRowBlockCells[i].row + 1][
-          lowestRowBlockCells[i].column
-        ] !== ""
+        currentBlock.cordinates[i].row === boardDimentions.height - 1 ||
+        (boardArray[currentBlock.cordinates[i].row + 1][
+          currentBlock.cordinates[i].column
+        ] !== "" &&
+          !Boolean(
+            currentBlock.cordinates.find(
+              (cordinate) =>
+                cordinate.row === currentBlock.cordinates[i].row + 1 &&
+                cordinate.column === currentBlock.cordinates[i].column
+            )
+          ))
       ) {
         return true
       }
     }
     return false
+    // let lowestRow = currentBlock.cordinates.reduce((acc, cordinate) => {
+    //   if (cordinate.row > acc) {
+    //     return cordinate.row
+    //   } else {
+    //     return acc
+    //   }
+    // }, 0)
+
+    // let lowestRowBlockCells = currentBlock.cordinates.filter((cordinate) => {
+    //   return cordinate.row === lowestRow
+    // })
+
+    // for (let i = 0; i < lowestRowBlockCells.length; i++) {
+    //   if (
+    //     lowestRowBlockCells[i].row === boardDimentions.height - 1 ||
+    //     boardArray[lowestRowBlockCells[i].row + 1][
+    //       lowestRowBlockCells[i].column
+    //     ] !== ""
+    //   ) {
+    //     return true
+    //   }
+    // }
+    // return false
   } else if (side === "right") {
     let veryRightColumn = currentBlock.cordinates.reduce((acc, cordinate) => {
       if (cordinate.column > acc) {
@@ -369,6 +405,23 @@ let collisionCheck = (side) => {
 }
 // console.log(lowestRowBlockCells)
 
+let filledRowsCheck = () => {
+  for (let i = 0; i < boardArray.length; i++) {
+    if (!boardArray[i].some((el) => el === "")) {
+      filledRow = i
+      return true
+    }
+  }
+  filledRow = ""
+  return false
+}
+
+let shift = () => {
+  boardArray[filledRow].forEach((column, index) => {
+    boardArray[filledRow][index] = ""
+    changeCellColor("", filledRow, index, initialColor)
+  })
+}
 // Event Listeners
 let leftCountdown = true
 let rightCountdown = true
@@ -382,7 +435,9 @@ addEventListener("keydown", (event) => {
       moveBlock(-1, 0)
     } else if (event.key === "ArrowRight" && !collisionCheck("right")) {
       moveBlock(1, 0)
-    }else if (event.key === "z"){rotateBlock()}
+    } else if (event.key === "z") {
+      rotateBlock()
+    }
   }
   setTimeout(() => {
     movementCountdown = true
@@ -395,12 +450,16 @@ createBlock()
 // Falling interval
 
 let update = () => {
+  console.log(collisionCheck("bottom"))
   if (!collisionCheck("bottom")) {
     if (nextBlockTimeout) {
       clearTimeout(nextBlockTimeout)
       nextBlockTimeout = 0
     }
     moveBlock(0, 1)
+    if (filledRowsCheck()) {
+      shift(filledRowsCheck())
+    }
     setTimeout(update, 500)
   } else {
     if (!nextBlockTimeout) {
