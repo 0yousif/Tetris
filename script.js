@@ -1,5 +1,5 @@
 // Variables
-
+// no bugs, currently I have the rotation, rows deletion, and rows shifting.
 // Board Variables
 let boardElement = document.querySelector(".mainBoard")
 let boardDimentions = {
@@ -15,70 +15,84 @@ let blocks = [
     width: 3,
     positions: [
       { row: 0, column: 1 },
-      { row: 1, column: 0 },
-      { row: 1, column: 1 },
-      { row: 1, column: 2 },
+      { row: 1, column: 0 }, //    ____
+      { row: 1, column: 1 }, // ___|  |___
+      { row: 1, column: 2 }, //|__________|
     ],
+    centerIndex: 2,
+    degree: 0,
   },
   {
     height: 1,
     width: 4,
     positions: [
       { row: 0, column: 0 },
-      { row: 0, column: 1 },
-      { row: 0, column: 2 },
-      { row: 0, column: 3 },
+      { row: 0, column: 1 }, //
+      { row: 0, column: 3 }, //  _____________
+      { row: 0, column: 2 }, // |_____________|
     ],
+    centerIndex: 1,
+    degree: 0,
   },
   {
     height: 2,
     width: 3,
     positions: [
       { row: 0, column: 0 },
-      { row: 1, column: 0 },
-      { row: 1, column: 1 },
-      { row: 1, column: 2 },
+      { row: 1, column: 0 }, // ____
+      { row: 1, column: 1 }, // |  |_____
+      { row: 1, column: 2 }, // |________|
     ],
+    centerIndex: 2,
+    degree: 0,
   },
   {
     height: 2,
     width: 3,
     positions: [
       { row: 0, column: 2 },
-      { row: 1, column: 0 },
-      { row: 1, column: 1 },
-      { row: 1, column: 2 },
+      { row: 1, column: 0 }, //          _____
+      { row: 1, column: 1 }, //   _______|   |
+      { row: 1, column: 2 }, //   |___ ______|
     ],
+    centerIndex: 2,
+    degree: 0,
   },
   {
     height: 2,
     width: 2,
     positions: [
       { row: 0, column: 0 },
-      { row: 0, column: 1 },
-      { row: 1, column: 0 },
-      { row: 1, column: 1 },
+      { row: 0, column: 1 }, // ______
+      { row: 1, column: 0 }, // |     |
+      { row: 1, column: 1 }, // |_____|
     ],
+    centerIndex: -1,
+    degree: 0,
   },
   {
     height: 2,
     width: 3,
     positions: [
       { row: 0, column: 1 },
-      { row: 0, column: 2 },
-      { row: 1, column: 0 },
-      { row: 1, column: 1 },
+      { row: 0, column: 2 }, //     ___
+      { row: 1, column: 0 }, //    |
+      { row: 1, column: 1 }, // ___
     ],
+    centerIndex: 3,
+    degree: 0,
   },
   {
     height: 2,
     width: 3,
     positions: [
       { row: 0, column: 0 },
-      { row: 0, column: 1 },
-      { row: 1, column: 1 },
-      { row: 1, column: 2 },
+      { row: 0, column: 1 }, // ___
+      { row: 1, column: 1 }, //    |
+      { row: 1, column: 2 }, //     ___
     ],
+    centerIndex: 2,
+    degree: 0,
   },
 ]
 let currentBlock = {
@@ -89,8 +103,11 @@ let currentBlock = {
     { row: 0, column: 0 },
     { row: 0, column: 0 },
   ],
+  centerIndex: 0,
+  degree: 0,
 }
 let colorsList = ["#FFBA00", "#27C9FF", "#40C422", "#7E84FF", "#D87EFF"]
+let initialColor = ["#FFD3DD"]
 let fallingSpeed = 1000
 let level = 1
 
@@ -146,16 +163,19 @@ let changeCellColor = (index, row, col, color) => {
   }
 }
 
+// can move function, left and right sides for the collision detector the left and right movement of the blocks, blocks overlaping
+
 let canMove = (newCordinates) => {
   for (let i = 0; i < newCordinates.length; i++) {
-    console.log()
     if (
       boardArray[newCordinates[i].row][newCordinates[i].column] !== "" &&
-      !Boolean(currentBlock.cordinates.find(
-        (cordinate) =>
-          cordinate.row === newCordinates[i].row &&
-          cordinate.column === newCordinates[i].column
-      ))
+      !Boolean(
+        currentBlock.cordinates.find(
+          (cordinate) =>
+            cordinate.row === newCordinates[i].row &&
+            cordinate.column === newCordinates[i].column
+        )
+      ) 
     ) {
       return false
     }
@@ -202,15 +222,12 @@ let moveBlock = (xMovement, yMovement) => {
 // Creates a block
 let createBlock = () => {
   // spawning the block
-  let newBlock = blocks[6]
+  // let newBlock = blocks[randomNumber(0, 6   )]
+  let newBlock = { ...blocks[1] }
   currentBlock.color = colorsList[randomNumber(0, 4)]
   let spawningRow = randomNumber(0, boardDimentions.width - 1 - newBlock.width)
-  // console.log(0, boardDimentions.width - newBlock.width)
-  // console.log(spawningRow)
-
   let spawningColumn = randomNumber(0, boardDimentions.width - newBlock.width)
 
-  // console.log(spawningRow, spawningColumn)
   currentBlock.cordinates.forEach((value, index) => {
     currentBlock.cordinates[index].row =
       spawningRow + newBlock.positions[index].row
@@ -227,8 +244,62 @@ let createBlock = () => {
       currentBlock.color
     )
   })
+  currentBlock.centerIndex = newBlock.centerIndex
 }
 
+let rotateBlock = () => {
+  let center
+  if (currentBlock.centerIndex === -1) {
+    return
+  }
+  let newCordinates = currentBlock.cordinates.map((cordinate) => {
+    return {
+      row:
+        cordinate.column -
+        currentBlock.cordinates[currentBlock.centerIndex].column +
+        currentBlock.cordinates[currentBlock.centerIndex].row,
+      column:
+        cordinate.row -
+        currentBlock.cordinates[currentBlock.centerIndex].row +
+        currentBlock.cordinates[currentBlock.centerIndex].column,
+    }
+  })
+  console.log(newCordinates)
+
+  for (let i = 0;i< newCordinates.length; i++){
+    if(newCordinates[i].row < 0 || newCordinates[i].row < 0 || newCordinates[i].row >= boardDimentions.height || newCordinates[i].column >= boardDimentions.width ){
+      return
+    }
+  }
+  if (canMove(newCordinates)) {
+    // newCordinates.forEach((el) => {
+    //   console.log(
+    //     document.querySelector(
+    //       `[data-index="${convertToIndex(el.row, el.column)}"]`
+    //     )
+    //   )
+    // })
+
+    
+    for (let i = 0; i < newCordinates.length; i++){
+      // editing the board variable 
+      boardArray[currentBlock.cordinates[i].row][currentBlock.cordinates[i].column] = ""
+      boardArray[newCordinates[i].row][newCordinates[i].column] = "x"
+
+      // editing the cordinates 
+
+      currentBlock.cordinates[i].row = newCordinates[i].row
+      currentBlock.cordinates[i].column = newCordinates[i].column 
+      // changing the color 
+        changeCellColor("",currentBlock.cordinates[i].row,currentBlock.cordinates[i].column, initialColor)
+        changeCellColor("", newCordinates[i].row,newCordinates[i].column,currentBlock.color)
+    }
+
+    // 
+  } else {
+    return
+  }
+}
 // checks if the current block is touching another block below it
 let collisionCheck = (side) => {
   if (side === "bottom") {
@@ -311,7 +382,7 @@ addEventListener("keydown", (event) => {
       moveBlock(-1, 0)
     } else if (event.key === "ArrowRight" && !collisionCheck("right")) {
       moveBlock(1, 0)
-    }
+    }else if (event.key === "z"){rotateBlock()}
   }
   setTimeout(() => {
     movementCountdown = true
@@ -323,21 +394,20 @@ createBlock()
 
 // Falling interval
 
-let gravity = () => {
-  // console.log(collisionCheck("left"), collisionCheck("right"))
+let update = () => {
   if (!collisionCheck("bottom")) {
     if (nextBlockTimeout) {
       clearTimeout(nextBlockTimeout)
       nextBlockTimeout = 0
     }
     moveBlock(0, 1)
-    setTimeout(gravity, 500)
+    setTimeout(update, 500)
   } else {
     if (!nextBlockTimeout) {
       nextBlockTimeout = setTimeout(createBlock, 2000)
     }
-    setTimeout(gravity, fallingSpeed * level)
+    setTimeout(update, fallingSpeed * level)
   }
 }
 
-gravity()
+update()
