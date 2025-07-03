@@ -1,5 +1,5 @@
 // Variables
-// new issue to solve the when the block is tuck
+//
 // Board Variables
 let boardElement = document.querySelector(".mainBoard")
 let boardDimentions = {
@@ -226,7 +226,8 @@ let createBlock = () => {
   let newBlock = blocks[randomNumber(0, 6)]
   // let newBlock = { ...blocks[1] }
   currentBlock.color = colorsList[randomNumber(0, 4)]
-  let spawningRow = randomNumber(0, boardDimentions.width - 1 - newBlock.width)
+  // let spawningRow = randomNumber(0, boardDimentions.width - 1 - newBlock.width)
+  let spawningRow = 0
   let spawningColumn = randomNumber(0, boardDimentions.width - newBlock.width)
 
   currentBlock.cordinates.forEach((value, index) => {
@@ -421,7 +422,20 @@ let shift = () => {
     boardArray[filledRow][index] = ""
     changeCellColor("", filledRow, index, initialColor)
   })
+
+  // editing the board
+
+  for (let j = filledRow; j < boardDimentions.height; j++) {
+    boardArray[j].forEach((value, index) => {
+      boardArray[j][index] = ""
+      boardArray[j - 1][index] = "x"
+
+      changeCellColor("", j, index, "")
+      changeCellColor("", j + 1, index, red)
+    })
+  }
 }
+
 // Event Listeners
 let leftCountdown = true
 let rightCountdown = true
@@ -435,6 +449,8 @@ addEventListener("keydown", (event) => {
       moveBlock(-1, 0)
     } else if (event.key === "ArrowRight" && !collisionCheck("right")) {
       moveBlock(1, 0)
+    } else if (event.key === "ArrowUp" && !collisionCheck("bottom")) {
+      moveBlock(0, 1)
     } else if (event.key === "z") {
       rotateBlock()
     }
@@ -457,13 +473,16 @@ let update = () => {
       nextBlockTimeout = 0
     }
     moveBlock(0, 1)
-    if (filledRowsCheck()) {
-      shift(filledRowsCheck())
-    }
     setTimeout(update, 500)
   } else {
     if (!nextBlockTimeout) {
-      nextBlockTimeout = setTimeout(createBlock, 2000)
+      if (filledRowsCheck()) {
+        shift(filledRowsCheck())
+      }
+      nextBlockTimeout = setTimeout(() => {
+        filledRow = ""
+        createBlock()
+      }, 2000)
     }
     setTimeout(update, fallingSpeed * level)
   }
