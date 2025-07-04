@@ -110,7 +110,7 @@ let colorsList = ["#FFBA00", "#27C9FF", "#40C422", "#7E84FF", "#D87EFF"]
 let initialColor = ["#FFD3DD"]
 let fallingSpeed = 1000
 let level = 1
-let filledRow
+// let filledRow = []
 
 // HTML Board creation
 
@@ -223,7 +223,7 @@ let moveBlock = (xMovement, yMovement) => {
 // Creates a block
 let createBlock = () => {
   // spawning the block
-  let newBlock = blocks[randomNumber(0, 6)]
+  let newBlock = blocks[1]
   // let newBlock = { ...blocks[1] }
   currentBlock.color = colorsList[randomNumber(0, 4)]
   // let spawningRow = randomNumber(0, boardDimentions.width - 1 - newBlock.width)
@@ -250,16 +250,16 @@ let createBlock = () => {
 }
 
 let rotateBlock = () => {
-  console.log(boardArray)
-  let center
   if (currentBlock.centerIndex === -1) {
     return
   }
-  let newCordinates = currentBlock.cordinates.map((cordinate) => {
+  let newCordinates
+  newCordinates = currentBlock.cordinates.map((cordinate) => {
     return {
       row:
-        cordinate.column -
-        currentBlock.cordinates[currentBlock.centerIndex].column +
+        (cordinate.column -
+          currentBlock.cordinates[currentBlock.centerIndex].column) *
+          -1 +
         currentBlock.cordinates[currentBlock.centerIndex].row,
       column:
         cordinate.row -
@@ -267,7 +267,6 @@ let rotateBlock = () => {
         currentBlock.cordinates[currentBlock.centerIndex].column,
     }
   })
-  console.log(newCordinates)
 
   for (let i = 0; i < newCordinates.length; i++) {
     if (
@@ -407,32 +406,49 @@ let collisionCheck = (side) => {
 // console.log(lowestRowBlockCells)
 
 let filledRowsCheck = () => {
+  let filledRows = []
   for (let i = 0; i < boardArray.length; i++) {
     if (!boardArray[i].some((el) => el === "")) {
-      filledRow = i
-      return true
+      filledRows.push(i)
     }
   }
-  filledRow = ""
-  return false
+  return filledRows
 }
 
-let shift = () => {
-  boardArray[filledRow].forEach((column, index) => {
-    boardArray[filledRow][index] = ""
-    changeCellColor("", filledRow, index, initialColor)
-  })
-
-  // editing the board
-
-  for (let j = filledRow; j < boardDimentions.height; j++) {
-    boardArray[j].forEach((value, index) => {
-      boardArray[j][index] = ""
-      boardArray[j - 1][index] = "x"
-
-      changeCellColor("", j, index, "")
-      changeCellColor("", j + 1, index, red)
+let shift = (filledRows) => {
+  for (let i = 0; i < filledRows.length; i++) {
+    boardArray[filledRows[i]].forEach((column, index) => {
+      boardArray[filledRows[i]][index] = ""
+      changeCellColor("", filledRows[i], index, initialColor)
     })
+  
+  // editing the board
+  for (let row = boardArray.length - 2; row > 1; row--) {
+    for (let column = 0; column < boardArray[row].length; column++) {
+      let shiftingDone = false
+      for (let shifts = 0; shifts < (row > 2? 4:4 - row); shifts++) {
+        if (
+          boardArray[row - shifts][column] !== "" &&
+          boardArray[row - shifts + 1][column] === ""
+        ) {
+          boardArray[row - shifts][column] = ""
+          boardArray[row + 1 - shifts][column] = "x"
+          console.log(console.log(row,shifts,column))
+          changeCellColor(
+            "",
+            row + 1 - shifts,
+            column,
+            document.querySelector(
+              `[data-index="${convertToIndex(row - shifts, column)}"]`
+            ).style.backgroundColor
+          )
+          changeCellColor("", row - shifts, column, initialColor)
+        } else {
+          shiftingDone = true
+        }
+      }
+    }
+  }
   }
 }
 
@@ -473,16 +489,16 @@ let update = () => {
       nextBlockTimeout = 0
     }
     moveBlock(0, 1)
-    setTimeout(update, 500)
+    setTimeout(update, 300)
   } else {
     if (!nextBlockTimeout) {
-      if (filledRowsCheck()) {
+      if (filledRowsCheck().length !== 0) {
         shift(filledRowsCheck())
       }
       nextBlockTimeout = setTimeout(() => {
         filledRow = ""
         createBlock()
-      }, 2000)
+      }, 500)
     }
     setTimeout(update, fallingSpeed * level)
   }
