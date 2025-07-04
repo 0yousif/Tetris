@@ -1,7 +1,7 @@
-*{
+* {
   box-sizing: border-box;
 }
-html{
+html {
   font-size: 1vw;
 }
 body {
@@ -9,32 +9,95 @@ body {
   justify-content: center;
   align-items: center;
   height: 100%;
-  width: 100vw;
+  width: 98vw;
+}
+main {
+  width: 40%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* aspect-ratio: 9/11; */
 }
 
-.mainBoard { 
-  display: grid;
-  width: 40%;
-  height: 50%;
-  padding: 0.5rem;
-  border: 2px solid rgb(240, 189, 189);
-  border-radius: 2rem;
-  /* gap: 0.1rem; */
-  outline: 2px solid black ;
-  outline-offset: 0.2rem;
-  background-color: #FF4873;
-}
-.mainBoard .boardCell{ 
-  aspect-ratio: 1/1;
-  background-color: antiquewhite;
+.tobBar {
+  height: 10vh;
   display: flex;
-  border-radius: 1.25rem;
+  justify-content: space-between;
+  width: 60%;
+  align-items: flex-end;
+  /* background-color: pink; */
+  margin: 4px;
+  gap: 4px;
+  color: white;
+}
+
+.tobBar p {
+  margin: 0;
+}
+
+.tobBar .title {
+  font-size: 1.25rem;
+}
+.tobBar .content {
+  font-size: 2rem;
+}
+
+.nextBlockContainer {
+  width: 50%;
+  background-color: #262b39;
+  height: 100%;
+  padding: 3rem;
+  border-radius: 0.5rem;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #FFD3DD;
-  border: 0.12rem solid black;
+}
+.nextBlock {
+  display: grid;
+  height: 100%;
+  grid-template-columns: repeat(4, 20%);
+  grid-template-rows: repeat(2, 1fr);
+}
+.nextBlock div {
+  aspect-ratio: 1/1;
+}
+.currentLevel,
+.currentScore {
+  width: 25%;
+  height: 70%;
+  border-radius: 0.5rem;
+  background-color: #262b39;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
+.mainBoard {
+  display: grid;
+  width: 60%;
+  aspect-ratio: 2/1;
+  padding: 0.5rem;
+  /* border: 2px solid rgb(240, 189, 189); */
+  border-radius: 1rem;
+  border: none;
+  /* gap: 0.1rem; */
+  /* outline: 2px solid black ;
+  outline-offset: 0.2rem; */
+  background-color: #262b39;
+}
+.mainBoard .boardCell {
+  aspect-ratio: 1/1;
+  display: flex;
+  border-radius: 0.3rem;
+  align-items: center;
+  justify-content: center;
+  background-color: #262b39;
+  border: 0.12rem solid #262b39;
+}
+/* 
 [data-index="1"]{
   background-color: saddlebrown;
-}
+} */

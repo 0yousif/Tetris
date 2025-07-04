@@ -3,8 +3,8 @@
 // Board Variables
 let boardElement = document.querySelector(".mainBoard")
 let boardDimentions = {
-  height: 11,
-  width: 9,
+  height: 20,
+  width: 10,
 }
 let boardArray = []
 
@@ -107,15 +107,16 @@ let currentBlock = {
   degree: 0,
 }
 let colorsList = ["#FFBA00", "#27C9FF", "#40C422", "#7E84FF", "#D87EFF"]
-let initialColor = ["#FFD3DD"]
+let initialColor = ["#262B39"]
 let fallingSpeed = 1000
 let level = 1
+let nextBlockObject
 // let filledRow = []
 
 // HTML Board creation
 
 for (let i = 0; i < boardDimentions.height * boardDimentions.width; i++) {
-  boardElement.innerHTML += `<div data-index="${i}" class="boardCell">+</div>`
+  boardElement.innerHTML += `<div data-index="${i}" class="boardCell"></div>`
 }
 boardElement.style.gridTemplateColumns = `repeat(${boardDimentions.width}, 1fr)`
 boardElement.style.gridTemplateRows = `repeat(${boardDimentions.height}, 1fr)`
@@ -220,10 +221,30 @@ let moveBlock = (xMovement, yMovement) => {
   }
 }
 
+let nextBlock = () => {
+  if (!nextBlockObject){
+    let currentBlockObject = blocks[randomNumber(0, 6)]
+    nextBlockObject = blocks[randomNumber(0, 6)]
+
+    return currentBlockObject
+  }else {
+    let currentBlockObject = nextBlockObject
+    nextBlockObject = blocks[randomNumber(0, 6)]
+    let nextBlockDisplay = document.querySelectorAll("#nextBlock div")
+    nextBlockDisplay.forEach((cell)=>{cell.style.backgroundColor = ""})
+    nextBlockObject.positions.forEach((cordinate)=>{
+      nextBlockDisplay[convertToIndex(cordinate.row,cordinate.column)].style.backgroundColor ="red"
+      
+    })
+    return currentBlockObject
+  }
+
+}
+
 // Creates a block
 let createBlock = () => {
   // spawning the block
-  let newBlock = blocks[1]
+  let newBlock = nextBlock()
   // let newBlock = { ...blocks[1] }
   currentBlock.color = colorsList[randomNumber(0, 4)]
   // let spawningRow = randomNumber(0, boardDimentions.width - 1 - newBlock.width)
@@ -315,7 +336,6 @@ let rotateBlock = () => {
   } else {
     return
   }
-  console.log(boardArray)
 }
 // checks if the current block is touching another block below it
 let collisionCheck = (side) => {
@@ -338,29 +358,6 @@ let collisionCheck = (side) => {
       }
     }
     return false
-    // let lowestRow = currentBlock.cordinates.reduce((acc, cordinate) => {
-    //   if (cordinate.row > acc) {
-    //     return cordinate.row
-    //   } else {
-    //     return acc
-    //   }
-    // }, 0)
-
-    // let lowestRowBlockCells = currentBlock.cordinates.filter((cordinate) => {
-    //   return cordinate.row === lowestRow
-    // })
-
-    // for (let i = 0; i < lowestRowBlockCells.length; i++) {
-    //   if (
-    //     lowestRowBlockCells[i].row === boardDimentions.height - 1 ||
-    //     boardArray[lowestRowBlockCells[i].row + 1][
-    //       lowestRowBlockCells[i].column
-    //     ] !== ""
-    //   ) {
-    //     return true
-    //   }
-    // }
-    // return false
   } else if (side === "right") {
     let veryRightColumn = currentBlock.cordinates.reduce((acc, cordinate) => {
       if (cordinate.column > acc) {
@@ -421,35 +418,40 @@ let shift = (filledRows) => {
       boardArray[filledRows[i]][index] = ""
       changeCellColor("", filledRows[i], index, initialColor)
     })
-  
-  // editing the board
-  for (let row = boardArray.length - 2; row > 1; row--) {
-    for (let column = 0; column < boardArray[row].length; column++) {
-      let shiftingDone = false
-      for (let shifts = 0; shifts < (row > 2? 4:4 - row); shifts++) {
-        if (
-          boardArray[row - shifts][column] !== "" &&
-          boardArray[row - shifts + 1][column] === ""
-        ) {
-          boardArray[row - shifts][column] = ""
-          boardArray[row + 1 - shifts][column] = "x"
-          console.log(console.log(row,shifts,column))
-          changeCellColor(
-            "",
-            row + 1 - shifts,
-            column,
-            document.querySelector(
-              `[data-index="${convertToIndex(row - shifts, column)}"]`
-            ).style.backgroundColor
-          )
-          changeCellColor("", row - shifts, column, initialColor)
-        } else {
-          shiftingDone = true
+
+    // editing the board
+    for (let row = boardArray.length - 2; row > 1; row--) {
+      for (let column = 0; column < boardArray[row].length; column++) {
+        for (let shifts = 0; shifts < (row > 2 ? 4 : 4 - row); shifts++) {
+          if (
+            boardArray[row - shifts][column] !== "" &&
+            boardArray[row - shifts + 1][column] === ""
+          ) {
+            boardArray[row - shifts][column] = ""
+            boardArray[row + 1 - shifts][column] = "x"
+            changeCellColor(
+              "",
+              row + 1 - shifts,
+              column,
+              document.querySelector(
+                `[data-index="${convertToIndex(row - shifts, column)}"]`
+              ).style.backgroundColor
+            )
+            changeCellColor("", row - shifts, column, initialColor)
+          }
         }
       }
     }
   }
+
+
+  if (filledRowsCheck().length !== 0) {
+    shift(filledRowsCheck())
   }
+}
+
+let gameOverCheck = () => {
+  return boardArray[0].some((cell) => cell !== "")
 }
 
 // Event Listeners
@@ -465,9 +467,9 @@ addEventListener("keydown", (event) => {
       moveBlock(-1, 0)
     } else if (event.key === "ArrowRight" && !collisionCheck("right")) {
       moveBlock(1, 0)
-    } else if (event.key === "ArrowUp" && !collisionCheck("bottom")) {
+    } else if (event.key === "ArrowDown" && !collisionCheck("bottom")) {
       moveBlock(0, 1)
-    } else if (event.key === "z") {
+    } else if (event.key === "ArrowUp") {
       rotateBlock()
     }
   }
@@ -482,26 +484,31 @@ createBlock()
 // Falling interval
 
 let update = () => {
-  console.log(collisionCheck("bottom"))
   if (!collisionCheck("bottom")) {
+    // if there was nothing below the current block
     if (nextBlockTimeout) {
+      // clear the next block timeout timeout
       clearTimeout(nextBlockTimeout)
-      nextBlockTimeout = 0
+      nextBlockTimeout = null
     }
     moveBlock(0, 1)
+    // setTimeout(update, fallingSpeed * level)
     setTimeout(update, 300)
   } else {
-    if (!nextBlockTimeout) {
-      if (filledRowsCheck().length !== 0) {
-        shift(filledRowsCheck())
-      }
-      nextBlockTimeout = setTimeout(() => {
-        filledRow = ""
-        createBlock()
-      }, 500)
+    // if there was another filled cell under the current block
+    // if the next block timeout has not been started
+    if (filledRowsCheck().length !== 0) {
+      shift(filledRowsCheck())
     }
-    setTimeout(update, fallingSpeed * level)
+    if (gameOverCheck()) {
+      console.log("gameOvre")
+    }
+    nextBlockTimeout = setTimeout(() => {
+      // start the next block timeout
+      createBlock()
+    }, 400) // block freeze and next block creation time (this should higher than the next update after new block creation)
+
+    setTimeout(update, 300) // next move after the new block creation
   }
 }
-
 update()
