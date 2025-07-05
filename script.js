@@ -109,8 +109,11 @@ let currentBlock = {
 let colorsList = ["#FFBA00", "#27C9FF", "#40C422", "#7E84FF", "#D87EFF"]
 let initialColor = ["#262B39"]
 let fallingSpeed = 1000
-let level = 1
 let nextBlockObject
+let level = 1
+let score = 0
+let scoreDisplay = document.querySelector("#score")
+let levelDisplay = document.querySelector("#level")
 // let filledRow = []
 
 // HTML Board creation
@@ -222,23 +225,25 @@ let moveBlock = (xMovement, yMovement) => {
 }
 
 let nextBlock = () => {
-  if (!nextBlockObject){
+  if (!nextBlockObject) {
     let currentBlockObject = blocks[randomNumber(0, 6)]
     nextBlockObject = blocks[randomNumber(0, 6)]
 
     return currentBlockObject
-  }else {
+  } else {
     let currentBlockObject = nextBlockObject
     nextBlockObject = blocks[randomNumber(0, 6)]
     let nextBlockDisplay = document.querySelectorAll("#nextBlock div")
-    nextBlockDisplay.forEach((cell)=>{cell.style.backgroundColor = ""})
-    nextBlockObject.positions.forEach((cordinate)=>{
-      nextBlockDisplay[convertToIndex(cordinate.row,cordinate.column)].style.backgroundColor ="red"
-      
+    nextBlockDisplay.forEach((cell) => {
+      cell.style.backgroundColor = ""
+    })
+    nextBlockObject.positions.forEach((position) => {
+      nextBlockDisplay[
+        position.row * 4 + position.column
+      ].style.backgroundColor = "red"
     })
     return currentBlockObject
   }
-
 }
 
 // Creates a block
@@ -412,6 +417,11 @@ let filledRowsCheck = () => {
   return filledRows
 }
 
+let updateScore = (filledRowsCount) => {
+  score = score + ((filledRowsCount ** 2)* 10)
+  scoreDisplay.textContent = score
+}
+
 let shift = (filledRows) => {
   for (let i = 0; i < filledRows.length; i++) {
     boardArray[filledRows[i]].forEach((column, index) => {
@@ -444,6 +454,7 @@ let shift = (filledRows) => {
     }
   }
 
+  updateScore(filledRows.length)
 
   if (filledRowsCheck().length !== 0) {
     shift(filledRowsCheck())
