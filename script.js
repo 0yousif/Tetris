@@ -111,9 +111,10 @@ let initialColor = ["#262B39"]
 let fallingSpeed = 500
 let nextBlockObject
 let level = 1
-let score = 1000
+let score = 0
 let scoreDisplay = document.querySelector("#score")
 let levelDisplay = document.querySelector("#level")
+
 // let filledRow = []
 
 // HTML Board creation
@@ -467,28 +468,39 @@ let gameOverCheck = () => {
   return boardArray[0].some((cell) => cell !== "")
 }
 
+let gameEnd = () => {
+  for (let i = 0; i < timeOuts.length; i++) {
+    clearTimeout(timeOuts[i])
+    timeOuts.splice(i, 1)
+  }
+  window.alert("game over =( ")
+}
+
 // Event Listeners
 let leftCountdown = true
 let rightCountdown = true
 let movementCountdown = true
 let nextBlockTimeout
+let timeOuts = []
 
 addEventListener("keydown", (event) => {
-  if (movementCountdown) {
-    movementCountdown = false
-    if (event.key === "ArrowLeft" && !collisionCheck("left")) {
-      moveBlock(-1, 0)
-    } else if (event.key === "ArrowRight" && !collisionCheck("right")) {
-      moveBlock(1, 0)
-    } else if (event.key === "ArrowDown" && !collisionCheck("bottom")) {
-      moveBlock(0, 1)
-    } else if (event.key === "ArrowUp") {
-      rotateBlock()
+  if (!gameOverCheck()) {
+    if (movementCountdown) {
+      movementCountdown = false
+      if (event.key === "ArrowLeft" && !collisionCheck("left")) {
+        moveBlock(-1, 0)
+      } else if (event.key === "ArrowRight" && !collisionCheck("right")) {
+        moveBlock(1, 0)
+      } else if (event.key === "ArrowDown" && !collisionCheck("bottom")) {
+        moveBlock(0, 1)
+      } else if (event.key === "ArrowUp") {
+        rotateBlock()
+      }
     }
+    setTimeout(() => {
+      movementCountdown = true
+    }, 100)
   }
-  setTimeout(() => {
-    movementCountdown = true
-  }, 100)
 })
 
 // Intervals
@@ -505,7 +517,7 @@ let update = () => {
       nextBlockTimeout = null
     }
     moveBlock(0, 1)
-    setTimeout(update, (fallingSpeed / level) * 1.3)
+    timeOuts.push(setTimeout(update, (fallingSpeed / level) * 1.3))
     // setTimeout(update, 300)
   } else {
     // if there was another filled cell under the current block
@@ -514,7 +526,8 @@ let update = () => {
       shift(filledRowsCheck())
     }
     if (gameOverCheck()) {
-      console.log("gameOvre")
+      gameEnd()
+      return
     }
     nextBlockTimeout = setTimeout(() => {
       // start the next block timeout
