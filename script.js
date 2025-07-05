@@ -108,10 +108,10 @@ let currentBlock = {
 }
 let colorsList = ["#FFBA00", "#27C9FF", "#40C422", "#7E84FF", "#D87EFF"]
 let initialColor = ["#262B39"]
-let fallingSpeed = 1000
+let fallingSpeed = 500
 let nextBlockObject
 let level = 1
-let score = 0
+let score = 1000
 let scoreDisplay = document.querySelector("#score")
 let levelDisplay = document.querySelector("#level")
 // let filledRow = []
@@ -418,8 +418,10 @@ let filledRowsCheck = () => {
 }
 
 let updateScore = (filledRowsCount) => {
-  score = score + ((filledRowsCount ** 2)* 10)
+  score = score + filledRowsCount ** 2 * 25
   scoreDisplay.textContent = score
+  level = Math.ceil(score / 100)
+  levelDisplay.textContent = level
 }
 
 let shift = (filledRows) => {
@@ -503,8 +505,8 @@ let update = () => {
       nextBlockTimeout = null
     }
     moveBlock(0, 1)
-    // setTimeout(update, fallingSpeed * level)
-    setTimeout(update, 300)
+    setTimeout(update, (fallingSpeed / level) * 1.3)
+    // setTimeout(update, 300)
   } else {
     // if there was another filled cell under the current block
     // if the next block timeout has not been started
@@ -517,9 +519,9 @@ let update = () => {
     nextBlockTimeout = setTimeout(() => {
       // start the next block timeout
       createBlock()
-    }, 400) // block freeze and next block creation time (this should higher than the next update after new block creation)
+    }, (400 / level) * 1.3) // block freeze and next block creation time (this should higher than the next update after new block creation)
 
-    setTimeout(update, 300) // next move after the new block creation
+    setTimeout(update, (300 / level) * 1.3) // next move after the new block creation
   }
 }
 update()
