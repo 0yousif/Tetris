@@ -241,7 +241,7 @@ let nextBlock = () => {
     nextBlockObject.positions.forEach((position) => {
       nextBlockDisplay[
         position.row * 4 + position.column
-      ].style.backgroundColor = "red"
+      ].style.backgroundColor = "#d4d4d4"
     })
     return currentBlockObject
   }

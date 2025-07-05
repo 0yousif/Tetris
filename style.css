@@ -48,7 +48,6 @@ main {
   width: 50%;
   background-color: #262b39;
   height: 100%;
-  padding: 3rem;
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -57,11 +56,18 @@ main {
 .nextBlock {
   display: grid;
   height: 100%;
+  width: 100%;
+  padding: 0.75rem;
   grid-template-columns: repeat(4, 20%);
   grid-template-rows: repeat(2, 1fr);
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+
 }
 .nextBlock div {
   aspect-ratio: 1/1;
+  border-radius:3px ;
 }
 .currentLevel,
 .currentScore {
