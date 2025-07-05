@@ -435,33 +435,32 @@ let shift = (filledRows) => {
     // editing the board
     for (let row = boardArray.length - 2; row > 1; row--) {
       for (let column = 0; column < boardArray[row].length; column++) {
-        for (let shifts = 0; shifts < (row > 2 ? 4 : 4 - row); shifts++) {
           if (
-            boardArray[row - shifts][column] !== "" &&
-            boardArray[row - shifts + 1][column] === ""
+            boardArray[row ][column] !== "" &&
+            boardArray[row + 1][column] === ""
           ) {
-            boardArray[row - shifts][column] = ""
-            boardArray[row + 1 - shifts][column] = "x"
+            boardArray[row ][column] = ""
+            boardArray[row + 1 ][column] = "x"
             changeCellColor(
               "",
-              row + 1 - shifts,
+              row + 1 ,
               column,
               document.querySelector(
-                `[data-index="${convertToIndex(row - shifts, column)}"]`
+                `[data-index="${convertToIndex(row , column)}"]`
               ).style.backgroundColor
             )
-            changeCellColor("", row - shifts, column, initialColor)
+            changeCellColor("", row , column, initialColor)
           }
-        }
+        
       }
     }
   }
 
   updateScore(filledRows.length)
 
-  if (filledRowsCheck().length !== 0) {
-    shift(filledRowsCheck())
-  }
+  // if (filledRowsCheck().length !== 0) {
+  //   shift(filledRowsCheck())
+  // }
 }
 
 let gameOverCheck = () => {
