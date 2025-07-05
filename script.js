@@ -114,27 +114,29 @@ let level = 1
 let score = 0
 let scoreDisplay = document.querySelector("#score")
 let levelDisplay = document.querySelector("#level")
+let resetButton = document.querySelector("#resetButton")
 
 // let filledRow = []
 
 // HTML Board creation
-
-for (let i = 0; i < boardDimentions.height * boardDimentions.width; i++) {
-  boardElement.innerHTML += `<div data-index="${i}" class="boardCell"></div>`
-}
-boardElement.style.gridTemplateColumns = `repeat(${boardDimentions.width}, 1fr)`
-boardElement.style.gridTemplateRows = `repeat(${boardDimentions.height}, 1fr)`
-
-// JS board array creation
-for (let i = 0; i < boardDimentions.height; i++) {
-  boardArray.push([])
-}
-
-boardArray.forEach((row) => {
-  for (let i = 0; i < boardDimentions.width; i++) {
-    row.push("")
+let initiateBoard = () => {
+  for (let i = 0; i < boardDimentions.height * boardDimentions.width; i++) {
+    boardElement.innerHTML += `<div data-index="${i}" class="boardCell"></div>`
   }
-})
+  boardElement.style.gridTemplateColumns = `repeat(${boardDimentions.width}, 1fr)`
+  boardElement.style.gridTemplateRows = `repeat(${boardDimentions.height}, 1fr)`
+
+  // JS board array creation
+  for (let i = 0; i < boardDimentions.height; i++) {
+    boardArray.push([])
+  }
+
+  boardArray.forEach((row) => {
+    for (let i = 0; i < boardDimentions.width; i++) {
+      row.push("")
+    }
+  })
+}
 
 // Functions
 
@@ -426,6 +428,7 @@ let updateScore = (filledRowsCount) => {
 }
 
 let shift = (filledRows) => {
+  console.log(filledRows)
   for (let i = 0; i < filledRows.length; i++) {
     boardArray[filledRows[i]].forEach((column, index) => {
       boardArray[filledRows[i]][index] = ""
@@ -435,23 +438,22 @@ let shift = (filledRows) => {
     // editing the board
     for (let row = boardArray.length - 2; row > 1; row--) {
       for (let column = 0; column < boardArray[row].length; column++) {
-          if (
-            boardArray[row ][column] !== "" &&
-            boardArray[row + 1][column] === ""
-          ) {
-            boardArray[row ][column] = ""
-            boardArray[row + 1 ][column] = "x"
-            changeCellColor(
-              "",
-              row + 1 ,
-              column,
-              document.querySelector(
-                `[data-index="${convertToIndex(row , column)}"]`
-              ).style.backgroundColor
-            )
-            changeCellColor("", row , column, initialColor)
-          }
-        
+        if (
+          boardArray[row][column] !== "" &&
+          boardArray[row + 1][column] === ""
+        ) {
+          boardArray[row][column] = ""
+          boardArray[row + 1][column] = "x"
+          changeCellColor(
+            "",
+            row + 1,
+            column,
+            document.querySelector(
+              `[data-index="${convertToIndex(row, column)}"]`
+            ).style.backgroundColor
+          )
+          changeCellColor("", row, column, initialColor)
+        }
       }
     }
   }
@@ -467,13 +469,14 @@ let gameOverCheck = () => {
   return boardArray[0].some((cell) => cell !== "")
 }
 
-let gameEnd = () => {
+let gameStop = () => {
   for (let i = 0; i < timeOuts.length; i++) {
     clearTimeout(timeOuts[i])
     timeOuts.splice(i, 1)
   }
   window.alert("game over =( ")
 }
+
 
 // Event Listeners
 let leftCountdown = true
@@ -502,8 +505,8 @@ addEventListener("keydown", (event) => {
   }
 })
 
+resetButton.addEventListener("click", resetGame)
 // Intervals
-createBlock()
 
 // Falling interval
 
@@ -525,7 +528,7 @@ let update = () => {
       shift(filledRowsCheck())
     }
     if (gameOverCheck()) {
-      gameEnd()
+      gameStop()
       return
     }
     nextBlockTimeout = setTimeout(() => {
@@ -536,4 +539,10 @@ let update = () => {
     setTimeout(update, (300 / level) * 1.3) // next move after the new block creation
   }
 }
-update()
+
+// Main
+;(() => {
+  initiateBoard()
+  createBlock()
+  update()
+})()
