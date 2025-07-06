@@ -225,7 +225,33 @@ main {
   display: none;
   
 }
+#homeButton{
+  position:fixed;
+  width: 3rem;
+  aspect-ratio: 1/1;
+  top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 1rem;
+  border-radius: 10px ;
+  border: #262b39 solid 3px;
+  transition: all 0.25s;
+}
 
+#homeButton:hover {
+  background-color:#262b39 ;
+
+  cursor: pointer;
+}
+#homeButton:hover img {
+  filter: invert(100%);
+}
+
+#homeButton img{
+  width: 100%;
+  aspect-ratio: 1/1;
+}
 
 .gameOverPanel button:hover{
   color: white;
