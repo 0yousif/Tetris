@@ -505,7 +505,7 @@ addEventListener("keydown", (event) => {
   }
 })
 
-resetButton.addEventListener("click", resetGame)
+// resetButton.addEventListener("click", resetGame())
 // Intervals
 
 // Falling interval

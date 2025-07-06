@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetris</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main>
+      <div class="tobBar">
+        <div class="currentLevel">
+          <p class="title">Level</p>
+          <p class="content" id="level">1</p>
+        </div>
+        <div class="nextBlockContainer">
+          <div class="nextBlock" id="nextBlock">
+            <div data-nextBlock-index="0"></div>
+            <div data-nextBlock-index="1"></div>
+            <div data-nextBlock-index="2"></div>
+            <div data-nextBlock-index="3"></div>
+            <div data-nextBlock-index="4"></div>
+            <div data-nextBlock-index="5"></div>
+            <div data-nextBlock-index="6"></div>
+            <div data-nextBlock-index="7"></div>
+          </div>
+        </div>
+        <div class="currentScore ">
+          
+          <p class="title">Score</p>
+          <p class="content" id="score">0</p>
+        </div>
+      </div>
+      <div class="mainBoard"></div>
+    </main>
+    <!-- <aside class="buttonsContainer">
+    <button class="active" id="resetButton">Reset</button>
+    <button class="active">Play Again</button>
+    </aside> -->
+    <div class="gameOverPanel">
+      
+    </div>
+  </body>
+  <script src="script.js" defer></script>
+
+</div>
+</html>

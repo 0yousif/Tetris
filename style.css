@@ -4,10 +4,16 @@
 }
 * {
   box-sizing: border-box;
-  font-family: kalamBold,'Courier New', Courier, monospace;
+  font-family: kalamBold, "Courier New", Courier, monospace;
+  text-decoration: none;
+}
+
+a:visited{
+  color: inherit;
 }
 html {
   font-size: 1vw;
+  background-color: whitesmoke;
 }
 body {
   display: flex;
@@ -47,7 +53,6 @@ main {
 }
 .tobBar .content {
   font-size: 1.4rem;
-
 }
 
 .nextBlockContainer {
@@ -69,11 +74,10 @@ main {
   align-items: center;
   justify-content: center;
   gap: 3px;
-
 }
 .nextBlock div {
   aspect-ratio: 1/1;
-  border-radius:3px ;
+  border-radius: 3px;
 }
 .currentLevel,
 .currentScore {
@@ -113,11 +117,11 @@ main {
 [data-index="1"]{
   background-color: saddlebrown;
 } */
-
+/* 
 .buttonsContainer{
   display: flex;
   flex-direction: column;
-  /* justify-content: ; */
+  justify-content: ;
   width: 20%;
 }
 
@@ -137,8 +141,39 @@ main {
   justify-content: center;
 }
 
-.buttonsContainer .active:hover{
+.buttonsContainer active:hover{
   background-color: #262b39;
   color: white;
+  cursor: pointer;
+} */
+
+.mainMenuBody {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.mainMenuBody button {
+  width: 20%;
+  height: 4rem;
+  font-size: 1.5rem;
+  margin: 0.5rem 0;
+  border-radius: 0.5rem;
+  border: #262b39 solid 5px;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  transition: 0.25s;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.mainMenuBody button:hover {
+  background-color: #262b39 ;
+  color: white ;
   cursor: pointer;
 }
