@@ -474,7 +474,11 @@ let gameStop = () => {
     clearTimeout(timeOuts[i])
     timeOuts.splice(i, 1)
   }
-  window.alert("game over =( ")
+  document.querySelector("#gameOverPanel").style.display = "flex  "
+  document.querySelector("#playAgainButton").style.display = "block"
+  document.querySelector("#gameOverPanel").style.opacity = "1"
+  document.querySelector("#playAgainButton").style.opacity = "1"
+
 }
 
 

@@ -18,7 +18,7 @@ html {
 body {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   height: 100%;
   width: 98vw;
 }
@@ -153,6 +153,7 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 .mainMenuBody button {
   width: 20%;
@@ -177,3 +178,57 @@ main {
   color: white ;
   cursor: pointer;
 }
+
+.rulesPanel,.gameOverPanel {
+  width: 40%;
+  height: 50%;
+  background-color: rgb(235, 235, 235);
+  position: fixed;
+  border-radius: 2.5rem;
+  border: #262b39 5px solid;
+  outline: #262b39 5px solid;
+  outline-offset: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.25s;
+  text-align: center;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.gameOverPanel{
+    display: none;
+}
+
+.rulesPanel h1,
+.gameOverPanel h1 {
+  width: 100%;
+  text-align: center;
+}
+
+
+.gameOverPanel {
+  height:25%;
+  pointer-events: all;
+}
+.gameOverPanel button {
+  height: 3rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0.5rem 2rem;
+  border-radius: 0.5rem;
+  border: #262b39 solid 4px;
+  transition: all 0.25s;
+  display: none;
+  
+}
+
+
+.gameOverPanel button:hover{
+  color: white;
+  background-color:#262b39 ;
+}
+

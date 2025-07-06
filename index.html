@@ -7,11 +7,32 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="mainMenuBody">
+    <div class="rulesPanel" id="rulesPanel">
+      <h1>Tetris Rules</h1>
+      <p>
+        Blocks fall from the top - your job is to fit them together neatly. When
+        you fill a complete row, it disappears and you earn points. The more
+        lines you clear at once, the higher your score!<br />
+
+        Controls:<br />
+        ◄ ► = Move left/right<br />
+        ▲ = Rotate<br />
+        ▼ = Drop faster<br />
+        <br />
+        Game Over when blocks stack to the top.<br />
+        Tip: Plan ahead and leave space for long pieces!<br />
+      </p>
+    </div>
     <img
       src="c:\Users\Student Me\Pictures\Screenshots\لقطة شاشة 2025-07-06 025652.png"
       alt=""
     />
-    <button> <a href="game.html">Play</a></button>
-    <button>Rules</button>
+    <button onclick="document.location.href = 'game.html'">Play</button>
+    <button
+      onmouseover="document.querySelector('#rulesPanel').style.opacity = '1'"
+      onmouseleave="document.querySelector('#rulesPanel').style.opacity = '0'"
+    >
+      Rules
+    </button>
   </body>
 </html>
