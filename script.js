@@ -116,7 +116,9 @@ let scoreDisplay = document.querySelector("#score")
 let levelDisplay = document.querySelector("#level")
 let resetButton = document.querySelector("#resetButton")
 
-// let filledRow = []
+// Sounds 
+
+
 
 // HTML Board creation
 let initiateBoard = () => {
@@ -171,7 +173,6 @@ let changeCellColor = (index, row, col, color) => {
   }
 }
 
-// can move function, left and right sides for the collision detector the left and right movement of the blocks, blocks overlaping
 
 let canMove = (newCordinates) => {
   for (let i = 0; i < newCordinates.length; i++) {
@@ -251,11 +252,8 @@ let nextBlock = () => {
 
 // Creates a block
 let createBlock = () => {
-  // spawning the block
   let newBlock = nextBlock()
-  // let newBlock = { ...blocks[1] }
   currentBlock.color = colorsList[randomNumber(0, 4)]
-  // let spawningRow = randomNumber(0, boardDimentions.width - 1 - newBlock.width)
   let spawningRow = 0
   let spawningColumn = randomNumber(0, boardDimentions.width - newBlock.width)
 
@@ -308,13 +306,7 @@ let rotateBlock = () => {
     }
   }
   if (canMove(newCordinates)) {
-    // newCordinates.forEach((el) => {
-    //   console.log(
-    //     document.querySelector(
-    //       `[data-index="${convertToIndex(el.row, el.column)}"]`
-    //     )
-    //   )
-    // })
+
 
     for (let i = 0; i < newCordinates.length; i++) {
       // editing the board variable
@@ -336,7 +328,6 @@ let rotateBlock = () => {
         newCordinates[i].column,
         currentBlock.color
       )
-      // editing the cordinates
 
       currentBlock.cordinates[i].row = newCordinates[i].row
       currentBlock.cordinates[i].column = newCordinates[i].column
@@ -345,7 +336,7 @@ let rotateBlock = () => {
     return
   }
 }
-// checks if the current block is touching another block below it
+// Checks if the current block is touching another block below it
 let collisionCheck = (side) => {
   if (side === "bottom") {
     for (let i = 0; i < currentBlock.cordinates.length; i++) {
@@ -408,7 +399,6 @@ let collisionCheck = (side) => {
     return false
   }
 }
-// console.log(lowestRowBlockCells)
 
 let filledRowsCheck = () => {
   let filledRows = []
@@ -428,7 +418,6 @@ let updateScore = (filledRowsCount) => {
 }
 
 let shift = (filledRows) => {
-  console.log(filledRows)
   for (let i = 0; i < filledRows.length; i++) {
     boardArray[filledRows[i]].forEach((column, index) => {
       boardArray[filledRows[i]][index] = ""
@@ -460,9 +449,7 @@ let shift = (filledRows) => {
 
   updateScore(filledRows.length)
 
-  // if (filledRowsCheck().length !== 0) {
-  //   shift(filledRowsCheck())
-  // }
+
 }
 
 let gameOverCheck = () => {
@@ -509,7 +496,6 @@ addEventListener("keydown", (event) => {
   }
 })
 
-// resetButton.addEventListener("click", resetGame())
 // Intervals
 
 // Falling interval
@@ -518,15 +504,14 @@ let update = () => {
   if (!collisionCheck("bottom")) {
     // if there was nothing below the current block
     if (nextBlockTimeout) {
-      // clear the next block timeout timeout
+      // clear the next block timeout 
       clearTimeout(nextBlockTimeout)
       nextBlockTimeout = null
     }
     moveBlock(0, 1)
     timeOuts.push(setTimeout(update, (fallingSpeed / level) * 1.3))
-    // setTimeout(update, 300)
   } else {
-    // if there was another filled cell under the current block
+    // If there was another filled cell under the current block
     // if the next block timeout has not been started
     if (filledRowsCheck().length !== 0) {
       shift(filledRowsCheck())
@@ -538,9 +523,9 @@ let update = () => {
     nextBlockTimeout = setTimeout(() => {
       // start the next block timeout
       createBlock()
-    }, (400 / level) * 1.3) // block freeze and next block creation time (this should higher than the next update after new block creation)
+    }, (400 / level) * 1.3) // Block freeze and next block creation time (this should higher than the next update after new block creation)
 
-    setTimeout(update, (300 / level) * 1.3) // next move after the new block creation
+    setTimeout(update, (300 / level) * 1.3) // Next move after the new block creation
   }
 }
 
@@ -550,3 +535,4 @@ let update = () => {
   createBlock()
   update()
 })()
+
