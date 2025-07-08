@@ -4,18 +4,27 @@
 
 ### By: Yousif Radhi
 
+Click [here](https://tetrominos.surge.sh/) to check the project.
+
 ### Project Description
+
 This is the unit 1 project, and it is intended to be a simple Tetris version programmed using HTML, CSS, and vanilla JavaScript.
+
 ### Getting Started
+
 The game is already online! Click here to [visit](surge link) it.
 
 ### Future Updates
-- bla bla bla
-- bla bla bla
+
+- 2 players feature
+- sounds
 
 ### Wireframes
-![alt text](image.png)
-### Psudo Code 
+
+![](./images/indexpage.png)
+![](./images/gamePage.png)
+
+### Psudo Code
 
 #### HTML
 
@@ -33,7 +42,7 @@ The game is already online! Click here to [visit](surge link) it.
 
 - Level
 
-- Falling speed: fixed number * the current level
+- Falling speed: fixed number \* the current level
 
 - Blocks: array of the blocks shape
 
@@ -54,4 +63,5 @@ The game is already online! Click here to [visit](surge link) it.
 ##### event listeners
 
 - Arrows event listeners: will move the current block by 1 each time or as long as the left/right arrow is pressed
+
 # Tetris---GA-P1
